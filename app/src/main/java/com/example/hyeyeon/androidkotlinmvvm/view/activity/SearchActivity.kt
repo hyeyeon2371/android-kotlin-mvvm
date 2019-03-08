@@ -20,9 +20,6 @@ import org.koin.core.parameter.parametersOf
 class SearchActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySearchBinding
     private lateinit var handler: SearchEventHandler
-    private lateinit var observer: Observer<List<SearchResponseItem>>
-    private lateinit var listener: RecyclerView.OnScrollListener
-
     private val viewModel: SearchViewModel by viewModel { parametersOf(handler) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,19 +43,19 @@ class SearchActivity : AppCompatActivity() {
             override fun showMessage(message: String) = Toast.makeText(this@SearchActivity, message, Toast.LENGTH_SHORT).show()
         }
 
-        observer = Observer {
+        Observer<List<SearchResponseItem>> {
             if (it.isNullOrEmpty()) {
                 (binding.rvSearchList.adapter as SearchAdapter).clearItem()
             } else {
                 (binding.rvSearchList.adapter as SearchAdapter).addAllItems(it)
             }
+        }.let { observer ->
+            viewModel.searchResultList.observe(this, observer)
         }
-
-        viewModel.searchResultList.observe(this, observer)
     }
 
     private fun initSearchListView() {
-        listener = object : RecyclerView.OnScrollListener() {
+        object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
 
@@ -69,13 +66,10 @@ class SearchActivity : AppCompatActivity() {
                     if (totalItemCount - 1 == lastItemPosition)
                         viewModel.getSearchResults()
                 }
-
             }
-        }
+        }.let { binding.rvSearchList.addOnScrollListener(it) }
 
         binding.rvSearchList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         binding.rvSearchList.adapter = SearchAdapter(viewModel)
-        binding.rvSearchList.addOnScrollListener(listener)
     }
-
 }

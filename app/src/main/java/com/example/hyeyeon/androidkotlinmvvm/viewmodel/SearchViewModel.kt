@@ -37,7 +37,7 @@ class SearchViewModel(private val handler: SearchEventHandler, private val repos
             page = 0
 
             searchResultList.postValue(null)
-            if (!value.isBlank()) getSearchResults()
+            if (value.isNotBlank()) getSearchResults()
         }
 
     var searchResultList = MutableLiveData<List<SearchResponseItem>>().apply { ArrayList<SearchResponseItem>() }
