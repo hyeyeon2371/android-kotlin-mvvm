@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
         <import type="java.lang.Integer" />
 
         <variable
-            name="vm"
+            name="viewModel"
             type="com.example.hyeyeon.androidkotlinmvvm.viewmodel.SearchViewModel" />
     </data>
 
-    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-
+    <android.support.constraint.ConstraintLayout
         xmlns:bind="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -42,7 +42,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
-                android:text="@{vm.pageStr}" />
+                android:text="@{viewModel.pageStr}" />
 
             <EditText
                 android:id="@+id/et_search_query"
@@ -53,7 +53,7 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginRight="8dp"
                 android:gravity="center_vertical"
-                android:text="@={vm.query}"
+                android:text="@={viewModel.query}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -72,7 +72,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/ll_search"
             app:layout_constraintVertical_bias="0.0"
-            bind:searchItem="@{vm.searchResults}"
+            bind:searchItem="@{viewModel.searchResultList}"
             />
 
     </android.support.constraint.ConstraintLayout>

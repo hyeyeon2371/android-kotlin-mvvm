@@ -2,7 +2,6 @@ package com.example.hyeyeon.androidkotlinmvvm.view.adapter
 
 import android.databinding.DataBindingUtil
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.example.hyeyeon.androidkotlinmvvm.BR
@@ -11,14 +10,15 @@ import com.example.hyeyeon.androidkotlinmvvm.databinding.ItemSearchBinding
 import com.example.hyeyeon.androidkotlinmvvm.model.SearchResponseItem
 import com.example.hyeyeon.androidkotlinmvvm.viewmodel.SearchViewModel
 
-class SearchAdapter(val viewModel: SearchViewModel) : RecyclerView.Adapter<SearchAdapter.Holder>() {
+class SearchAdapter(private val searchViewModel: SearchViewModel) : RecyclerView.Adapter<SearchAdapter.Holder>() {
     private var personList: MutableList<SearchResponseItem> = ArrayList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
-        val binding = DataBindingUtil.inflate<ItemSearchBinding>(LayoutInflater.from(parent.context), R.layout.item_search, parent, false)
-        binding.viewModel = viewModel
-
-        return Holder(binding)
+        DataBindingUtil.inflate<ItemSearchBinding>(LayoutInflater.from(parent.context), R.layout.item_search, parent, false).apply {
+            this.viewModel = searchViewModel
+        }.let { binding ->
+            return Holder(binding)
+        }
     }
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
@@ -30,14 +30,13 @@ class SearchAdapter(val viewModel: SearchViewModel) : RecyclerView.Adapter<Searc
     }
 
     fun setItem(personList: MutableList<SearchResponseItem>?) {
-        if (personList == null)
-            return
+        if (personList == null) return
 
         this.personList = personList
         notifyDataSetChanged()
     }
 
-    fun clearItem(){
+    fun clearItem() {
         personList.clear()
         notifyDataSetChanged()
     }
@@ -48,8 +47,6 @@ class SearchAdapter(val viewModel: SearchViewModel) : RecyclerView.Adapter<Searc
     }
 
     inner class Holder(private val binding: ItemSearchBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: SearchResponseItem) {
-            binding.setVariable(BR.item, item)
-        }
+        fun bind(item: SearchResponseItem) = binding.setVariable(BR.item, item)
     }
 }

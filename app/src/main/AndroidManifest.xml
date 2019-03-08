@@ -24,10 +24,10 @@
 
         <meta-data
             android:name="NaverClientSecret"
-            android:value="@string/NaverClientSecret"/>
+            android:value="@string/naver_client_secret"/>
         <meta-data
             android:name="NaverClientID"
-            android:value="@string/NaverClientID"/>
+            android:value="@string/naver_client_id"/>
     </application>
 
 </manifest>

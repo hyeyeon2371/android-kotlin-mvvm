@@ -5,7 +5,6 @@ import com.example.hyeyeon.androidkotlinmvvm.common.ResourceProvider
 import com.example.hyeyeon.androidkotlinmvvm.data.handler.SearchEventHandler
 import com.example.hyeyeon.androidkotlinmvvm.data.repository.SearchRepositoryImpl
 import com.example.hyeyeon.androidkotlinmvvm.data.service.SearchDataSource
-import com.example.hyeyeon.androidkotlinmvvm.view.adapter.SearchAdapter
 import com.example.hyeyeon.androidkotlinmvvm.viewmodel.SearchViewModel
 import com.google.gson.GsonBuilder
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
@@ -14,7 +13,6 @@ import okhttp3.ResponseBody
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.android.viewmodel.ext.koin.viewModel
 import org.koin.dsl.module.module
-import org.koin.experimental.builder.singleBy
 import retrofit2.Converter
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -28,31 +26,29 @@ val appModule = module {
 
 val networkModule = module {
     single { createOkHttpClient() }
-    single { createWebService<SearchDataSource>(get(), DatasourceProperties.BASE_URL)}
+    single { createWebService<SearchDataSource>(get(), DataSourceProperties.BASE_URL) }
 }
 
-object DatasourceProperties {
+object DataSourceProperties {
     const val BASE_URL = "https://openapi.naver.com/v1/search/"
 }
 
 inline fun <reified S> createWebService(okHttpClient: OkHttpClient, url: String): S {
-    val gson = GsonBuilder().setLenient().create()
-    val retrofit = Retrofit.Builder()
-            .client(okHttpClient)
-            .baseUrl(url)
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .addConverterFactory(NullOnEmptyConverterFactory())
-            .addCallAdapterFactory(CoroutineCallAdapterFactory())
-            .build()
-
-    return retrofit.create(S::class.java)
-
+    return GsonBuilder().setLenient().create().let { gson ->
+        Retrofit.Builder()
+                .client(okHttpClient)
+                .baseUrl(url)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .addConverterFactory(NullOnEmptyConverterFactory())
+                .addCallAdapterFactory(CoroutineCallAdapterFactory())
+                .build().let { retrofit ->
+                    retrofit.create(S::class.java)
+                }
+    }
 }
 
-fun createOkHttpClient(): OkHttpClient {
-    val interceptor = HttpLoggingInterceptor()
-    interceptor.level = HttpLoggingInterceptor.Level.BASIC
-    return OkHttpClient.Builder().addInterceptor(interceptor).build()
+fun createOkHttpClient(): OkHttpClient = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BASIC }.let {
+    return OkHttpClient.Builder().addInterceptor(it).build()
 }
 
 class NullOnEmptyConverterFactory : Converter.Factory() {

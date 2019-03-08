@@ -6,16 +6,16 @@ import com.example.hyeyeon.androidkotlinmvvm.model.SearchResponseItem
 import kotlinx.coroutines.*
 
 interface SearchRepository {
-    fun getPeople(NAVER_CLIENT_ID: String, NAVER_CLIENT_SECRET: String, query: String, start: Int, display: Int) : Deferred<List<SearchResponseItem>>
+    fun getSearchResultAsync(NAVER_CLIENT_ID: String, NAVER_CLIENT_SECRET: String, query: String, start: Int, display: Int): Deferred<List<SearchResponseItem>>
 }
 
-class SearchRepositoryImpl(val dataSource: SearchDataSource) : SearchRepository {
+class SearchRepositoryImpl(private val dataSource: SearchDataSource) : SearchRepository {
     private val itemCache = arrayListOf<SearchResponseItem>()
 
-    override fun getPeople(NAVER_CLIENT_ID: String, NAVER_CLIENT_SECRET: String, query: String, start : Int, display: Int): Deferred<List<SearchResponseItem>> = GlobalScope.async(Dispatchers.Default, CoroutineStart.DEFAULT, null, {
-        val response = dataSource.getSearchResult(NAVER_CLIENT_ID, NAVER_CLIENT_SECRET, query, start, display).await()
-        itemCache.addAll(response.items)
-        response.items
+    override fun getSearchResultAsync(NAVER_CLIENT_ID: String, NAVER_CLIENT_SECRET: String, query: String, start: Int, display: Int): Deferred<List<SearchResponseItem>> = GlobalScope.async(Dispatchers.Default, CoroutineStart.DEFAULT, null, {
+        dataSource.getSearchResultAsync(NAVER_CLIENT_ID, NAVER_CLIENT_SECRET, query, start, display).await().let {
+            itemCache.addAll(it.items)
+            it.items
+        }
     })
-
 }

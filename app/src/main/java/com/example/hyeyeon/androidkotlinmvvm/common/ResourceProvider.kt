@@ -5,13 +5,9 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.os.Build
 
-class ResourceProvider(val context: Context) {
-    fun getString(resId: Int): String {
-        return context.getString(resId)
-    }
+class ResourceProvider(private val context: Context) {
+    fun getString(resId: Int): String = context.getString(resId)
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    fun getDrawable(redId: Int): Drawable? {
-        return context.getDrawable(redId)
-    }
+    fun getDrawable(redId: Int): Drawable? = context.getDrawable(redId)
 }

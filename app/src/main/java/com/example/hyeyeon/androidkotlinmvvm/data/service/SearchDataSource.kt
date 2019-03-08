@@ -10,13 +10,12 @@ import retrofit2.http.Query
 
 interface SearchDataSource {
     /* GET */
-
     @GET("book.json")
-    fun getSearchResult(@Header("X-Naver-Client-Id") clientId: String,
-                        @Header("X-Naver-Client-Secret") clientSecret: String,
-                        @Query("query") query: String,
-                        @Query("start") start: Int,
-                        @Query("display") display: Int): Deferred<SearchResponse>
+    fun getSearchResultAsync(@Header("X-Naver-Client-Id") clientId: String,
+                             @Header("X-Naver-Client-Secret") clientSecret: String,
+                             @Query("query") query: String,
+                             @Query("start") start: Int,
+                             @Query("display") display: Int): Deferred<SearchResponse>
 
 }
 

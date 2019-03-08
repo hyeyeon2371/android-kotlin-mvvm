@@ -11,18 +11,9 @@ import com.example.hyeyeon.androidkotlinmvvm.view.adapter.SearchAdapter
 object DataBindingAdapter {
     @JvmStatic
     @BindingAdapter("bind:searchItem")
-    fun RecyclerView.bindItem(items: MutableList<SearchResponseItem>?) {
-        if (items != null) {
-            val adapter = this.adapter as SearchAdapter
-            adapter.setItem(items)
-        }
-    }
+    fun RecyclerView.bindItem(items: MutableList<SearchResponseItem>?) = items?.let { (this.adapter as SearchAdapter).setItem(items) }
 
     @JvmStatic
     @BindingAdapter("android:src")
-    fun ImageView.loadUrl(url: String?) {
-        if(url != null){
-            Glide.with(this.context).load(url).thumbnail(0.3f).into(this)
-        }
-    }
+    fun ImageView.loadUrl(url: String?) = url?.let { Glide.with(this.context).load(url).thumbnail(0.3f).into(this) }
 }

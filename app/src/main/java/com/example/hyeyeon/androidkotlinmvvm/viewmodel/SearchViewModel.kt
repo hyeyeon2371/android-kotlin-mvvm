@@ -15,11 +15,10 @@ import kotlinx.coroutines.launch
 import java.util.logging.Logger
 
 
-class SearchViewModel(val handler: SearchEventHandler, private val repository: SearchRepositoryImpl, resourceProvider: ResourceProvider) : BaseObservableViewModel() {
+class SearchViewModel(private val handler: SearchEventHandler, private val repository: SearchRepositoryImpl, resourceProvider: ResourceProvider) : BaseObservableViewModel() {
     private val logger = Logger.getLogger(this::class.java.name)!!
-    private val NAVER_CLIENT_ID: String = resourceProvider.getString(R.string.NaverClientID)
-    private val NAVER_CLIENT_SECRET: String = resourceProvider.getString(R.string.NaverClientSecret)
-
+    private val NAVER_CLIENT_ID: String = resourceProvider.getString(R.string.naver_client_id)
+    private val NAVER_CLIENT_SECRET: String = resourceProvider.getString(R.string.naver_client_secret)
     private var display = 5
 
     var page = 0
@@ -37,28 +36,25 @@ class SearchViewModel(val handler: SearchEventHandler, private val repository: S
             field = value
             page = 0
 
-            searchResults.postValue(null)
-            if(!value.isBlank()){
-                getSearchResults()
-            }
+            searchResultList.postValue(null)
+            if (!value.isBlank()) getSearchResults()
         }
 
-    var searchResults = MutableLiveData<List<SearchResponseItem>>().apply { ArrayList<SearchResponseItem>() }
+    var searchResultList = MutableLiveData<List<SearchResponseItem>>().apply { ArrayList<SearchResponseItem>() }
 
-    fun onClickItem(message: String) {
-        handler.onClickItem(message)
-    }
+    fun onClickItem(message: String) = handler.onClickItem(message)
 
     fun getSearchResults() {
-        val offset = display * (++page - 1) + 1
         GlobalScope.launch(Dispatchers.Default, CoroutineStart.DEFAULT, null, {
-            try{
-                val items = repository.getPeople(NAVER_CLIENT_ID, NAVER_CLIENT_SECRET, query, offset, display).await()
-                searchResults.postValue(items)
-            }catch (t: Throwable){
+            try {
+                (display * (++page - 1) + 1).let { offset ->
+                    repository.getSearchResultAsync(NAVER_CLIENT_ID, NAVER_CLIENT_SECRET, query, offset, display).await().let { list ->
+                        searchResultList.postValue(list)
+                    }
+                }
+            } catch (t: Throwable) {
                 logger.warning(t.localizedMessage)
             }
         })
     }
-
 }

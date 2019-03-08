@@ -14,8 +14,6 @@ import com.example.hyeyeon.androidkotlinmvvm.databinding.ActivitySearchBinding
 import com.example.hyeyeon.androidkotlinmvvm.model.SearchResponseItem
 import com.example.hyeyeon.androidkotlinmvvm.view.adapter.SearchAdapter
 import com.example.hyeyeon.androidkotlinmvvm.viewmodel.SearchViewModel
-
-import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -29,22 +27,23 @@ class SearchActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        setEventHandlerAndObserver()
         initDataBinding()
     }
 
-    private fun setEventHandlerAndObserver() {
+    private fun initDataBinding() {
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_search)
+
+        initEventHandlerAndObserver()
+        initSearchListView()
+
+        binding.viewModel = viewModel
+        binding.executePendingBindings()
+    }
+
+    private fun initEventHandlerAndObserver() {
         handler = object : SearchEventHandler {
-            override fun onClickItem(message: String) {
-                Toast.makeText(this@SearchActivity, message, Toast.LENGTH_SHORT).show()
-            }
-
-            override fun showMessage(message: String) {
-                Toast.makeText(this@SearchActivity, message, Toast.LENGTH_SHORT).show()
-            }
-
-
+            override fun onClickItem(message: String) = Toast.makeText(this@SearchActivity, message, Toast.LENGTH_SHORT).show()
+            override fun showMessage(message: String) = Toast.makeText(this@SearchActivity, message, Toast.LENGTH_SHORT).show()
         }
 
         observer = Observer {
@@ -55,35 +54,27 @@ class SearchActivity : AppCompatActivity() {
             }
         }
 
-        viewModel.searchResults.observe(this, observer)
+        viewModel.searchResultList.observe(this, observer)
     }
 
-    private fun initDataBinding() {
-
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_search)
-        binding.rvSearchList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-        binding.rvSearchList.adapter = SearchAdapter(viewModel)
-        binding.vm = viewModel
-
-        binding.executePendingBindings()
-        setRecyclerViewScrollListener()
-    }
-
-    private fun setRecyclerViewScrollListener() {
+    private fun initSearchListView() {
         listener = object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
 
-                val layoutManager = recyclerView.layoutManager!! as LinearLayoutManager
-                val totalItemCount = layoutManager.itemCount
-                val lastItemPosition = layoutManager.findLastVisibleItemPosition()
+                (recyclerView.layoutManager!! as LinearLayoutManager).let { layoutManager ->
+                    val totalItemCount = layoutManager.itemCount
+                    val lastItemPosition = layoutManager.findLastVisibleItemPosition()
 
-                if (totalItemCount - 1 == lastItemPosition) {
-                    viewModel.getSearchResults()
+                    if (totalItemCount - 1 == lastItemPosition)
+                        viewModel.getSearchResults()
                 }
+
             }
         }
 
+        binding.rvSearchList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        binding.rvSearchList.adapter = SearchAdapter(viewModel)
         binding.rvSearchList.addOnScrollListener(listener)
     }
 

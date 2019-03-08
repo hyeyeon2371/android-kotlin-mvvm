@@ -7,38 +7,13 @@ import android.databinding.PropertyChangeRegistry
 
 open class BaseObservableViewModel : ViewModel(), Observable, LifecycleObserver {
     private var cb: PropertyChangeRegistry? = null
+        get() = field ?: PropertyChangeRegistry()
 
     override fun removeOnPropertyChangedCallback(callback: Observable.OnPropertyChangedCallback?) {
-        if (cb == null) {
-            cb = PropertyChangeRegistry()
-        }
-
-        cb!!.remove(callback)
+        cb?.remove(callback)
     }
 
     override fun addOnPropertyChangedCallback(callback: Observable.OnPropertyChangedCallback?) {
-        if (cb == null) {
-            cb = PropertyChangeRegistry()
-        }
-
-        cb!!.add(callback)
-    }
-
-    fun notifyChange() {
-        synchronized(this) {
-            if (cb == null) {
-                return
-            }
-        }
-        cb!!.notifyCallbacks(this, 0, null)
-    }
-
-    fun notifyPropertyChanged(fieldId : Int){
-        synchronized(this){
-            if(cb == null){
-                return
-            }
-        }
-        cb!!.notifyCallbacks(this, fieldId, null)
+        cb?.add(callback)
     }
 }

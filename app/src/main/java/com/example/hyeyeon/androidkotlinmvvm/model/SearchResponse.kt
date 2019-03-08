@@ -2,7 +2,6 @@ package com.example.hyeyeon.androidkotlinmvvm.model
 
 import java.util.*
 
-
 class SearchResponse {
     lateinit var lastBuildDate: String
     lateinit var items : MutableList<SearchResponseItem>
@@ -10,7 +9,6 @@ class SearchResponse {
     var total: Int = 0
     var start: Int = 1
     var display = 10
-
 }
 
 class SearchResponseItem : Observable() {
