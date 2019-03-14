@@ -5,6 +5,7 @@ import com.example.hyeyeon.androidkotlinmvvm.common.ResourceProvider
 import com.example.hyeyeon.androidkotlinmvvm.data.handler.SearchEventHandler
 import com.example.hyeyeon.androidkotlinmvvm.data.repository.SearchRepositoryImpl
 import com.example.hyeyeon.androidkotlinmvvm.data.service.SearchDataSource
+import com.example.hyeyeon.androidkotlinmvvm.view.activity.SearchActivity
 import com.example.hyeyeon.androidkotlinmvvm.viewmodel.SearchViewModel
 import com.google.gson.GsonBuilder
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory

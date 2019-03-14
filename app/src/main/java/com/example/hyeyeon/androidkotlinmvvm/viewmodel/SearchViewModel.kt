@@ -5,10 +5,13 @@ import android.databinding.Bindable
 import android.databinding.ObservableField
 import android.databinding.ObservableInt
 import android.view.View
+import com.example.hyeyeon.androidkotlinmvvm.BR
 import com.example.hyeyeon.androidkotlinmvvm.R
 import com.example.hyeyeon.androidkotlinmvvm.common.ResourceProvider
+import com.example.hyeyeon.androidkotlinmvvm.common.base.BaseObservableViewModel
 import com.example.hyeyeon.androidkotlinmvvm.data.handler.SearchEventHandler
 import com.example.hyeyeon.androidkotlinmvvm.data.repository.SearchRepositoryImpl
+import com.example.hyeyeon.androidkotlinmvvm.model.history.SearchHistory
 import com.example.hyeyeon.androidkotlinmvvm.model.SearchResponseItem
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
@@ -41,12 +44,15 @@ class SearchViewModel(private val handler: SearchEventHandler, private val repos
         @Bindable
         get() = field
 
+
     fun onClickItem(message: String) = handler.onClickItem(message)
 
     fun onClickSearch() {
         page = 0
         searchResultList.postValue(null)
         getSearchResults()
+
+        handler.insertSearchHistory(SearchHistory(keyword = query))
     }
 
     fun getSearchResults() {
@@ -69,8 +75,7 @@ class SearchViewModel(private val handler: SearchEventHandler, private val repos
         } else {
             ObservableInt(View.VISIBLE)
         }
-
-        historyVisibility.notifyChange()
+        notifyPropertyChanged(BR.historyVisibility)
     }
 
 }
