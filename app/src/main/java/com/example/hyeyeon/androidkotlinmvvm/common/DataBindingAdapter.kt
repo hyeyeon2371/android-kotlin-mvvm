@@ -9,6 +9,9 @@ import com.example.hyeyeon.androidkotlinmvvm.model.keyword.SearchKeyword
 import com.example.hyeyeon.androidkotlinmvvm.view.adapter.SearchKeywordAdapter
 import com.example.hyeyeon.androidkotlinmvvm.view.adapter.SearchResultAdapter
 
+/**
+ * @author HyeyeonPark
+ */
 object DataBindingAdapter {
     @JvmStatic
     @BindingAdapter("bind:resultItem")

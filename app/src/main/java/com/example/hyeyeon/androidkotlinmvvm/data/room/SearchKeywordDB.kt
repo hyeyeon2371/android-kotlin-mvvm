@@ -7,6 +7,9 @@ import android.content.Context
 import com.example.hyeyeon.androidkotlinmvvm.model.keyword.SearchKeyword
 import com.example.hyeyeon.androidkotlinmvvm.model.keyword.SearchKeywordDao
 
+/**
+ * @author HyeyeonPark
+ */
 @Database(entities = [SearchKeyword::class], version = 1)
 abstract class SearchKeywordDB : RoomDatabase() {
     abstract fun dao(): SearchKeywordDao

@@ -4,6 +4,9 @@ import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Query
 import com.example.hyeyeon.androidkotlinmvvm.common.base.BaseDao
 
+/**
+ * @author HyeyeonPark
+ */
 @Dao
 interface SearchKeywordDao : BaseDao<SearchKeyword> {
     @Query("SELECT * FROM history ORDER BY id DESC LIMIT 5")

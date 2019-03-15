@@ -9,6 +9,9 @@ import com.example.hyeyeon.androidkotlinmvvm.databinding.ItemHistoryBinding
 import com.example.hyeyeon.androidkotlinmvvm.model.keyword.SearchKeyword
 import com.example.hyeyeon.androidkotlinmvvm.viewmodel.SearchViewModel
 
+/**
+ * @author HyeyeonPark
+ */
 class SearchKeywordAdapter(val viewModel: SearchViewModel) : RecyclerView.Adapter<SearchKeywordAdapter.Holder>() {
     private var items: MutableList<SearchKeyword> = ArrayList()
 

@@ -1,13 +1,14 @@
 package com.example.hyeyeon.androidkotlinmvvm.data.service
 
 import com.example.hyeyeon.androidkotlinmvvm.model.SearchResponse
-import io.reactivex.Observable
 import kotlinx.coroutines.Deferred
 import retrofit2.http.GET
 import retrofit2.http.Header
-import retrofit2.http.Path
 import retrofit2.http.Query
 
+/**
+ * @author HyeyeonPark
+ */
 interface SearchDataSource {
     /* GET */
     @GET("book.json")

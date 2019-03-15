@@ -19,6 +19,9 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.util.logging.Logger
 
+/**
+ * @author HyeyeonPark
+ */
 class SearchViewModel(private val handler: SearchEventHandler, private val repository: SearchRepositoryImpl, resourceProvider: ResourceProvider) : BaseObservableViewModel() {
     private val logger = Logger.getLogger(this::class.java.name)!!
     private val NAVER_CLIENT_ID: String = resourceProvider.getString(R.string.naver_client_id)

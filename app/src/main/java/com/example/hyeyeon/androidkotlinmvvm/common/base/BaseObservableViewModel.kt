@@ -5,6 +5,9 @@ import android.arch.lifecycle.ViewModel
 import android.databinding.Observable
 import android.databinding.PropertyChangeRegistry
 
+/**
+ * @author HyeyeonPark
+ */
 open class BaseObservableViewModel : ViewModel(), Observable, LifecycleObserver {
     private var registry: PropertyChangeRegistry? = PropertyChangeRegistry()
 

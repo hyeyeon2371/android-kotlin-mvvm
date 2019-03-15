@@ -1,6 +1,5 @@
 package com.example.hyeyeon.androidkotlinmvvm.view.activity
 
-
 import android.arch.lifecycle.Observer
 import android.content.Context
 import android.databinding.DataBindingUtil
@@ -28,6 +27,9 @@ import kotlinx.coroutines.launch
 import org.koin.android.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
+/**
+ * @author HyeyeonPark
+ */
 class SearchActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySearchBinding
     private lateinit var handler: SearchEventHandler
