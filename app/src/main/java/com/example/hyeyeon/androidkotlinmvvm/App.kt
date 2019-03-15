@@ -5,7 +5,10 @@ import com.example.hyeyeon.androidkotlinmvvm.module.appModule
 import com.example.hyeyeon.androidkotlinmvvm.module.networkModule
 import org.koin.android.ext.android.startKoin
 
-open class App : Application(){
+/**
+ * @author HyeyeonPark
+ */
+open class App : Application() {
     override fun onCreate() {
         super.onCreate()
 

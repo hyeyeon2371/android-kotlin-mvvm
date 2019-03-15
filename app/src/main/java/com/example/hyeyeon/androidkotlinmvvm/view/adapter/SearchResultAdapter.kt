@@ -10,7 +10,10 @@ import com.example.hyeyeon.androidkotlinmvvm.databinding.ItemSearchBinding
 import com.example.hyeyeon.androidkotlinmvvm.model.SearchResponseItem
 import com.example.hyeyeon.androidkotlinmvvm.viewmodel.SearchViewModel
 
-class SearchAdapter(private val searchViewModel: SearchViewModel) : RecyclerView.Adapter<SearchAdapter.Holder>() {
+/**
+ * @author HyeyeonPark
+ */
+class SearchResultAdapter(private val searchViewModel: SearchViewModel) : RecyclerView.Adapter<SearchResultAdapter.Holder>() {
     private var personList: MutableList<SearchResponseItem> = ArrayList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {

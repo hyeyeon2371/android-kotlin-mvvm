@@ -1,5 +1,11 @@
 package com.example.hyeyeon.androidkotlinmvvm.data.handler
 
-interface SearchEventHandler : BaseEventHandler{
-    fun onClickItem(message: String)
+import com.example.hyeyeon.androidkotlinmvvm.model.keyword.SearchKeyword
+
+/**
+ * @author HyeyeonPark
+ */
+interface SearchEventHandler : BaseEventHandler {
+    fun insertSearchHistory(searchKeyword: SearchKeyword)
+    fun deleteSearchHistory(searchKeyword: SearchKeyword)
 }
