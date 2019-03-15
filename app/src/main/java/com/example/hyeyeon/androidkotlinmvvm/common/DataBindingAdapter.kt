@@ -5,13 +5,21 @@ import android.support.v7.widget.RecyclerView
 import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.example.hyeyeon.androidkotlinmvvm.model.SearchResponseItem
-import com.example.hyeyeon.androidkotlinmvvm.view.adapter.SearchAdapter
+import com.example.hyeyeon.androidkotlinmvvm.model.keyword.SearchKeyword
+import com.example.hyeyeon.androidkotlinmvvm.view.adapter.SearchKeywordAdapter
+import com.example.hyeyeon.androidkotlinmvvm.view.adapter.SearchResultAdapter
 
-
+/**
+ * @author HyeyeonPark
+ */
 object DataBindingAdapter {
     @JvmStatic
-    @BindingAdapter("bind:searchItem")
-    fun RecyclerView.bindItem(items: MutableList<SearchResponseItem>?) = items?.let { (this.adapter as SearchAdapter).setItem(items) }
+    @BindingAdapter("bind:resultItem")
+    fun RecyclerView.bindSearchItem(items: MutableList<SearchResponseItem>?) = items?.let { (this.adapter as SearchResultAdapter).setItem(items) }
+
+    @JvmStatic
+    @BindingAdapter("bind:keywordItem")
+    fun RecyclerView.bindKeywordItem(items: MutableList<SearchKeyword>?) = items?.let { (this.adapter as SearchKeywordAdapter).setItem(items) }
 
     @JvmStatic
     @BindingAdapter("android:src")

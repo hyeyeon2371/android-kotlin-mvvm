@@ -1,14 +1,19 @@
 package com.example.hyeyeon.androidkotlinmvvm.data.repository
 
-
 import com.example.hyeyeon.androidkotlinmvvm.data.service.SearchDataSource
 import com.example.hyeyeon.androidkotlinmvvm.model.SearchResponseItem
 import kotlinx.coroutines.*
 
+/**
+ * @author HyeyeonPark
+ */
 interface SearchRepository {
     fun getSearchResultAsync(NAVER_CLIENT_ID: String, NAVER_CLIENT_SECRET: String, query: String, start: Int, display: Int): Deferred<List<SearchResponseItem>>
 }
 
+/**
+ * @author HyeyeonPark
+ */
 class SearchRepositoryImpl(private val dataSource: SearchDataSource) : SearchRepository {
     private val itemCache = arrayListOf<SearchResponseItem>()
 
