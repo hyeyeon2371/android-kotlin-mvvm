@@ -2,20 +2,24 @@ package com.example.hyeyeon.androidkotlinmvvm.view.activity
 
 
 import android.arch.lifecycle.Observer
+import android.content.Context
 import android.databinding.DataBindingUtil
+import android.databinding.ObservableInt
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import com.example.hyeyeon.androidkotlinmvvm.R
 import com.example.hyeyeon.androidkotlinmvvm.data.handler.SearchEventHandler
+import com.example.hyeyeon.androidkotlinmvvm.data.room.SearchKeywordDB
 import com.example.hyeyeon.androidkotlinmvvm.databinding.ActivitySearchBinding
-import com.example.hyeyeon.androidkotlinmvvm.model.history.SearchHistory
-import com.example.hyeyeon.androidkotlinmvvm.data.room.SearchHistoryDB
 import com.example.hyeyeon.androidkotlinmvvm.model.SearchResponseItem
-import com.example.hyeyeon.androidkotlinmvvm.view.adapter.SearchAdapter
+import com.example.hyeyeon.androidkotlinmvvm.model.keyword.SearchKeyword
+import com.example.hyeyeon.androidkotlinmvvm.view.adapter.SearchKeywordAdapter
+import com.example.hyeyeon.androidkotlinmvvm.view.adapter.SearchResultAdapter
 import com.example.hyeyeon.androidkotlinmvvm.viewmodel.SearchViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -27,7 +31,7 @@ import org.koin.core.parameter.parametersOf
 class SearchActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySearchBinding
     private lateinit var handler: SearchEventHandler
-    private lateinit var searchHistoryDB: SearchHistoryDB
+    private lateinit var searchKeywordDB: SearchKeywordDB
     private val viewModel: SearchViewModel by viewModel { parametersOf(handler) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,42 +42,66 @@ class SearchActivity : AppCompatActivity() {
     private fun initDataBinding() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_search)
 
-        initRoomDB()
         initEventHandlerAndObserver()
-        initSearchListView()
+        initRoomDB()
+        initSearchResultListView()
+        initSearchKeywordListView()
 
-        binding.llSearchHistory.bringToFront()
+        binding.clSearchHistory.bringToFront()
         binding.viewModel = viewModel
         binding.executePendingBindings()
     }
 
     private fun initEventHandlerAndObserver() {
         handler = object : SearchEventHandler {
-            override fun onClickItem(message: String) = Toast.makeText(this@SearchActivity, message, Toast.LENGTH_SHORT).show()
             override fun showMessage(message: String) = Toast.makeText(this@SearchActivity, message, Toast.LENGTH_SHORT).show()
-            override fun insertSearchHistory(searchHistory: SearchHistory) {
+            override fun insertSearchHistory(searchKeyword: SearchKeyword) {
                 CoroutineScope(Dispatchers.IO).launch {
-                    searchHistoryDB.dao().insertEntity(searchHistory)
+                    searchKeywordDB.dao().insertEntity(searchKeyword)
+                    viewModel.searchKeywordList.postValue(searchKeywordDB.dao().selectAllHistories().toMutableList())
+                }
+                hideKeyboard()
+                viewModel.historyVisibility = ObservableInt(View.GONE)
+            }
+
+            override fun deleteSearchHistory(searchKeyword: SearchKeyword) {
+                CoroutineScope(Dispatchers.IO).launch {
+                    searchKeywordDB.dao().deleteEntity(searchKeyword)
+                    viewModel.searchKeywordList.postValue(searchKeywordDB.dao().selectAllHistories().toMutableList())
                 }
             }
         }
 
+        Observer<MutableList<SearchKeyword>> {
+            if (it != null) {
+                (binding.rvSearchHistory.adapter as SearchKeywordAdapter).setItem(it)
+                viewModel.historyEmptyViewVisibility = if (it.isEmpty()) {
+                    ObservableInt(View.VISIBLE)
+                } else {
+                    ObservableInt(View.GONE)
+                }
+            }
+        }.let { keywordObserver ->
+            viewModel.searchKeywordList.observe(this, keywordObserver)
+        }
+
         Observer<List<SearchResponseItem>> {
             if (it.isNullOrEmpty()) {
-                (binding.rvSearchList.adapter as SearchAdapter).clearItem()
+                (binding.rvSearchResult.adapter as SearchResultAdapter).clearItem()
+                viewModel.resultEmptyViewVisibility = ObservableInt(View.VISIBLE)
             } else {
-                (binding.rvSearchList.adapter as SearchAdapter).addAllItems(it)
+                (binding.rvSearchResult.adapter as SearchResultAdapter).addAllItems(it)
+                viewModel.resultEmptyViewVisibility = ObservableInt(View.GONE)
             }
-        }.let { observer ->
-            viewModel.searchResultList.observe(this, observer)
+        }.let { resultObserver ->
+            viewModel.searchResultList.observe(this, resultObserver)
         }
     }
 
-    private fun initSearchListView() {
+    private fun initSearchResultListView() {
         object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
-
                 (recyclerView.layoutManager!! as LinearLayoutManager).let { layoutManager ->
                     val totalItemCount = layoutManager.itemCount
                     val lastItemPosition = layoutManager.findLastVisibleItemPosition()
@@ -82,13 +110,26 @@ class SearchActivity : AppCompatActivity() {
                         viewModel.getSearchResults()
                 }
             }
-        }.let { binding.rvSearchList.addOnScrollListener(it) }
+        }.let { binding.rvSearchResult.addOnScrollListener(it) }
 
-        binding.rvSearchList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-        binding.rvSearchList.adapter = SearchAdapter(viewModel)
+        binding.rvSearchResult.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        binding.rvSearchResult.adapter = SearchResultAdapter(viewModel)
     }
 
     private fun initRoomDB() {
-        searchHistoryDB = SearchHistoryDB.getInstance(this)
+        searchKeywordDB = SearchKeywordDB.getInstance(this)
+        CoroutineScope(Dispatchers.IO).launch {
+            viewModel.searchKeywordList.postValue(searchKeywordDB.dao().selectAllHistories().toMutableList())
+        }
+    }
+
+    private fun initSearchKeywordListView() {
+        binding.rvSearchHistory.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        binding.rvSearchHistory.adapter = SearchKeywordAdapter(viewModel)
+    }
+
+    private fun hideKeyboard(){
+        val manager = this.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        manager.hideSoftInputFromWindow(binding.etSearchKeyword.windowToken, 0)
     }
 }

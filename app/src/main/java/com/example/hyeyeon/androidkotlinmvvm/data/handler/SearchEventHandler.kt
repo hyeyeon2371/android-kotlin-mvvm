@@ -1,8 +1,8 @@
 package com.example.hyeyeon.androidkotlinmvvm.data.handler
 
-import com.example.hyeyeon.androidkotlinmvvm.model.history.SearchHistory
+import com.example.hyeyeon.androidkotlinmvvm.model.keyword.SearchKeyword
 
-interface SearchEventHandler : BaseEventHandler{
-    fun onClickItem(message: String)
-    fun insertSearchHistory(searchHistory: SearchHistory)
+interface SearchEventHandler : BaseEventHandler {
+    fun insertSearchHistory(searchKeyword: SearchKeyword)
+    fun deleteSearchHistory(searchKeyword: SearchKeyword)
 }
