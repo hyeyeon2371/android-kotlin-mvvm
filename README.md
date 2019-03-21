@@ -1,4 +1,5 @@
-# Sample project using Kotlin, ACC, MVVM-Pattern, Databinding, Retrofit2, Koin, Coroutine
+# Android Kotlin MVVM
+This is a demo application for Kotlin, ACC, MVVM-Pattern, etc.
 ## Libraries
 - Kotlin
 - ACC(ViewModel, LiveData, Room)
@@ -15,7 +16,7 @@
 <img src ="https://user-images.githubusercontent.com/42951723/54487993-c9ad5e80-48df-11e9-8923-79f178eeca29.png" width="220"/>
 </div>
 
-### Note
+## Note
 This project is using 'Naver Search API'. You shoud add Api keys for Naver API in string.xml.
 ``` xml
 <string name="naver_client_secret">YOUR_KEY</string>
