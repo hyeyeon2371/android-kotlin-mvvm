@@ -1,20 +1,20 @@
 package com.example.hyeyeon.androidkotlinmvvm.viewmodel
 
+import android.app.Activity
+import android.app.ProgressDialog
 import android.arch.lifecycle.MutableLiveData
 import android.databinding.Bindable
 import android.databinding.ObservableField
 import android.databinding.ObservableInt
+import android.support.v7.app.AppCompatDialog
 import android.view.View
 import com.example.hyeyeon.androidkotlinmvvm.BR
-import com.example.hyeyeon.androidkotlinmvvm.R
 import com.example.hyeyeon.androidkotlinmvvm.common.ResourceProvider
 import com.example.hyeyeon.androidkotlinmvvm.common.base.BaseObservableViewModel
 import com.example.hyeyeon.androidkotlinmvvm.data.handler.SearchEventHandler
 import com.example.hyeyeon.androidkotlinmvvm.data.repository.SearchRepositoryImpl
-import com.example.hyeyeon.androidkotlinmvvm.model.SearchResponseItem
+import com.example.hyeyeon.androidkotlinmvvm.model.GithubRepoReponse
 import com.example.hyeyeon.androidkotlinmvvm.model.keyword.SearchKeyword
-import kotlinx.coroutines.CoroutineStart
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.util.logging.Logger
@@ -24,8 +24,6 @@ import java.util.logging.Logger
  */
 class SearchViewModel(private val handler: SearchEventHandler, private val repository: SearchRepositoryImpl, resourceProvider: ResourceProvider) : BaseObservableViewModel() {
     private val logger = Logger.getLogger(this::class.java.name)!!
-    private val NAVER_CLIENT_ID: String = resourceProvider.getString(R.string.naver_client_id)
-    private val NAVER_CLIENT_SECRET: String = resourceProvider.getString(R.string.naver_client_secret)
     private var DISPLAY = 15
 
     private var page = 0
@@ -40,8 +38,8 @@ class SearchViewModel(private val handler: SearchEventHandler, private val repos
 
     var keyword: String = ""
 
-    var searchResultList = MutableLiveData<List<SearchResponseItem>>().apply { ArrayList<SearchResponseItem>() }
     var searchKeywordList = MutableLiveData<MutableList<SearchKeyword>>().apply { ArrayList<SearchKeyword>() }
+    var githubRepoList = MutableLiveData<MutableList<GithubRepoReponse.GithubRepoInfo>>()
 
     var historyEmptyViewVisibility = ObservableInt(View.GONE)
         @Bindable
@@ -71,24 +69,23 @@ class SearchViewModel(private val handler: SearchEventHandler, private val repos
 
     fun onClickSearch() {
         page = 0
-        searchResultList.postValue(null)
+        githubRepoList.postValue(null)
         getSearchResults()
         handler.insertSearchHistory(SearchKeyword(keyword = keyword))
     }
 
     fun getSearchResults() {
-        GlobalScope.launch(Dispatchers.Default, CoroutineStart.DEFAULT, null, {
+        GlobalScope.launch {
             try {
-                (DISPLAY * (++page - 1) + 1).let { offset ->
-                    repository.getSearchResultAsync(NAVER_CLIENT_ID, NAVER_CLIENT_SECRET, keyword, offset, DISPLAY).await().let { list ->
-                        searchResultList.postValue(list)
-                    }
+                repository.getGithubRepoAsync(keyword = keyword, sort = "stars", order = "desc").await().let {
+                    githubRepoList.postValue(it)
                 }
             } catch (t: Throwable) {
                 logger.warning(t.message)
             }
-        })
+        }
     }
+
 
     fun onClickHistory() {
         historyVisibility = if (historyVisibility.get() == View.VISIBLE) {

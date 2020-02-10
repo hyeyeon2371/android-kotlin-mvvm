@@ -6,6 +6,7 @@ import android.databinding.DataBindingUtil
 import android.databinding.ObservableInt
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.app.AppCompatDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
@@ -15,7 +16,7 @@ import com.example.hyeyeon.androidkotlinmvvm.R
 import com.example.hyeyeon.androidkotlinmvvm.data.handler.SearchEventHandler
 import com.example.hyeyeon.androidkotlinmvvm.data.room.SearchKeywordDB
 import com.example.hyeyeon.androidkotlinmvvm.databinding.ActivitySearchBinding
-import com.example.hyeyeon.androidkotlinmvvm.model.SearchResponseItem
+import com.example.hyeyeon.androidkotlinmvvm.model.GithubRepoReponse
 import com.example.hyeyeon.androidkotlinmvvm.model.keyword.SearchKeyword
 import com.example.hyeyeon.androidkotlinmvvm.view.adapter.SearchKeywordAdapter
 import com.example.hyeyeon.androidkotlinmvvm.view.adapter.SearchResultAdapter
@@ -87,21 +88,21 @@ class SearchActivity : AppCompatActivity() {
             viewModel.searchKeywordList.observe(this, keywordObserver)
         }
 
-        Observer<List<SearchResponseItem>> {
+        Observer<MutableList<GithubRepoReponse.GithubRepoInfo>> {
             if (it.isNullOrEmpty()) {
                 (binding.rvSearchResult.adapter as SearchResultAdapter).clearItem()
                 viewModel.resultEmptyViewVisibility = ObservableInt(View.VISIBLE)
             } else {
-                (binding.rvSearchResult.adapter as SearchResultAdapter).addAllItems(it)
+                (binding.rvSearchResult.adapter as SearchResultAdapter).setItem(it)
                 viewModel.resultEmptyViewVisibility = ObservableInt(View.GONE)
             }
         }.let { resultObserver ->
-            viewModel.searchResultList.observe(this, resultObserver)
+            viewModel.githubRepoList.observe(this, resultObserver)
         }
     }
 
     private fun initSearchResultListView() {
-        object : RecyclerView.OnScrollListener() {
+        val listener = object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
                 (recyclerView.layoutManager!! as LinearLayoutManager).let { layoutManager ->
@@ -112,7 +113,8 @@ class SearchActivity : AppCompatActivity() {
                         viewModel.getSearchResults()
                 }
             }
-        }.let { binding.rvSearchResult.addOnScrollListener(it) }
+        }
+//        binding.rvSearchResult.addOnScrollListener(listener)
 
         binding.rvSearchResult.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         binding.rvSearchResult.adapter = SearchResultAdapter(viewModel)
@@ -130,7 +132,7 @@ class SearchActivity : AppCompatActivity() {
         binding.rvSearchHistory.adapter = SearchKeywordAdapter(viewModel)
     }
 
-    private fun hideKeyboard(){
+    private fun hideKeyboard() {
         val manager = this.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         manager.hideSoftInputFromWindow(binding.etSearchKeyword.windowToken, 0)
     }

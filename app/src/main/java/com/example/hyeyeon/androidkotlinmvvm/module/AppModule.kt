@@ -1,6 +1,10 @@
 package com.example.hyeyeon.androidkotlinmvvm.module
 
 
+import android.app.ProgressDialog
+import android.content.Context
+import android.support.v7.app.AppCompatDialog
+import com.example.hyeyeon.androidkotlinmvvm.R
 import com.example.hyeyeon.androidkotlinmvvm.common.ResourceProvider
 import com.example.hyeyeon.androidkotlinmvvm.data.handler.SearchEventHandler
 import com.example.hyeyeon.androidkotlinmvvm.data.repository.SearchRepositoryImpl
@@ -30,7 +34,7 @@ val networkModule = module {
 }
 
 object DataSourceProperties {
-    const val BASE_URL = "https://openapi.naver.com/v1/search/"
+    const val BASE_URL = "https://api.github.com/"
 }
 
 inline fun <reified S> createWebService(okHttpClient: OkHttpClient, url: String): S {

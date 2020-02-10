@@ -13,6 +13,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:windowSoftInputMode="adjustPan"
+
         android:theme="@style/CustomAppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <activity android:name=".view.activity.SearchActivity">
@@ -23,12 +24,6 @@
             </intent-filter>
         </activity>
 
-        <meta-data
-            android:name="NaverClientSecret"
-            android:value="@string/naver_client_secret"/>
-        <meta-data
-            android:name="NaverClientID"
-            android:value="@string/naver_client_id"/>
     </application>
 
 </manifest>

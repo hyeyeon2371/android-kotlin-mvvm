@@ -1,25 +1,22 @@
 package com.example.hyeyeon.androidkotlinmvvm.data.repository
 
 import com.example.hyeyeon.androidkotlinmvvm.data.service.SearchDataSource
-import com.example.hyeyeon.androidkotlinmvvm.model.SearchResponseItem
+import com.example.hyeyeon.androidkotlinmvvm.model.GithubRepoReponse
 import kotlinx.coroutines.*
 
 /**
  * @author HyeyeonPark
  */
 interface SearchRepository {
-    fun getSearchResultAsync(NAVER_CLIENT_ID: String, NAVER_CLIENT_SECRET: String, query: String, start: Int, display: Int): Deferred<List<SearchResponseItem>>
+    fun getGithubRepoAsync(keyword: String, sort: String, order: String): Deferred<MutableList<GithubRepoReponse.GithubRepoInfo>>
 }
 
 /**
  * @author HyeyeonPark
  */
 class SearchRepositoryImpl(private val dataSource: SearchDataSource) : SearchRepository {
-    private val itemCache = arrayListOf<SearchResponseItem>()
-
-    override fun getSearchResultAsync(NAVER_CLIENT_ID: String, NAVER_CLIENT_SECRET: String, query: String, start: Int, display: Int): Deferred<List<SearchResponseItem>> = GlobalScope.async(Dispatchers.Default, CoroutineStart.DEFAULT, null, {
-        dataSource.getSearchResultAsync(NAVER_CLIENT_ID, NAVER_CLIENT_SECRET, query, start, display).await().let {
-            itemCache.addAll(it.items)
+    override fun getGithubRepoAsync(keyword: String, sort: String, order: String): Deferred<MutableList<GithubRepoReponse.GithubRepoInfo>> = GlobalScope.async(Dispatchers.Default, CoroutineStart.DEFAULT, null, {
+        dataSource.getGithubRepoAsync(keyword = keyword, sort = sort, order = order).await().let {
             it.items
         }
     })

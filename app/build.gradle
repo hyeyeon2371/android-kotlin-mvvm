@@ -30,6 +30,12 @@ android {
 }
 
 dependencies {
+    def koin_version = '1.0.2'
+    def arch_version = '1.1.1'
+    def retrofit_version ='2.5.0'
+    def glide_version ="4.8.0"
+    def room_version = "1.1.1"
+
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.android.support:appcompat-v7:28.0.0'
