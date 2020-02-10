@@ -1,10 +1,9 @@
 package com.example.hyeyeon.androidkotlinmvvm.module
 
 
-import android.app.ProgressDialog
 import android.content.Context
-import android.support.v7.app.AppCompatDialog
 import com.example.hyeyeon.androidkotlinmvvm.R
+import com.example.hyeyeon.androidkotlinmvvm.common.ProgressDialogUtil
 import com.example.hyeyeon.androidkotlinmvvm.common.ResourceProvider
 import com.example.hyeyeon.androidkotlinmvvm.data.handler.SearchEventHandler
 import com.example.hyeyeon.androidkotlinmvvm.data.repository.SearchRepositoryImpl
@@ -26,6 +25,7 @@ val appModule = module {
     viewModel { (handler: SearchEventHandler) -> SearchViewModel(handler, get(), get()) }
     single { ResourceProvider(get()) }
     single { SearchRepositoryImpl(get()) }
+    single { (context: Context) -> ProgressDialogUtil(context, R.style.ProgressDialogTheme) }
 }
 
 val networkModule = module {

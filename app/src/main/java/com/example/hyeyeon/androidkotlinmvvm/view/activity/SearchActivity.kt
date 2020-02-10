@@ -6,13 +6,13 @@ import android.databinding.DataBindingUtil
 import android.databinding.ObservableInt
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.app.AppCompatDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import com.example.hyeyeon.androidkotlinmvvm.R
+import com.example.hyeyeon.androidkotlinmvvm.common.ProgressDialogUtil
 import com.example.hyeyeon.androidkotlinmvvm.data.handler.SearchEventHandler
 import com.example.hyeyeon.androidkotlinmvvm.data.room.SearchKeywordDB
 import com.example.hyeyeon.androidkotlinmvvm.databinding.ActivitySearchBinding
@@ -25,6 +25,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -35,6 +36,7 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySearchBinding
     private lateinit var handler: SearchEventHandler
     private lateinit var searchKeywordDB: SearchKeywordDB
+    private val dialogUtil: ProgressDialogUtil by inject { parametersOf(this@SearchActivity) }
     private val viewModel: SearchViewModel by viewModel { parametersOf(handler) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -96,9 +98,14 @@ class SearchActivity : AppCompatActivity() {
                 (binding.rvSearchResult.adapter as SearchResultAdapter).setItem(it)
                 viewModel.resultEmptyViewVisibility = ObservableInt(View.GONE)
             }
+            dialogUtil.hide()
         }.let { resultObserver ->
             viewModel.githubRepoList.observe(this, resultObserver)
         }
+
+        viewModel.showDialogEvent.observe(this, Observer {
+            dialogUtil.show()
+        })
     }
 
     private fun initSearchResultListView() {

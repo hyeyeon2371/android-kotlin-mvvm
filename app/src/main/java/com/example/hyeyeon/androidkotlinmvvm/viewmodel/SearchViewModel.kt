@@ -1,15 +1,13 @@
 package com.example.hyeyeon.androidkotlinmvvm.viewmodel
 
-import android.app.Activity
-import android.app.ProgressDialog
 import android.arch.lifecycle.MutableLiveData
 import android.databinding.Bindable
 import android.databinding.ObservableField
 import android.databinding.ObservableInt
-import android.support.v7.app.AppCompatDialog
 import android.view.View
 import com.example.hyeyeon.androidkotlinmvvm.BR
 import com.example.hyeyeon.androidkotlinmvvm.common.ResourceProvider
+import com.example.hyeyeon.androidkotlinmvvm.common.SingleLiveEvent
 import com.example.hyeyeon.androidkotlinmvvm.common.base.BaseObservableViewModel
 import com.example.hyeyeon.androidkotlinmvvm.data.handler.SearchEventHandler
 import com.example.hyeyeon.androidkotlinmvvm.data.repository.SearchRepositoryImpl
@@ -65,9 +63,12 @@ class SearchViewModel(private val handler: SearchEventHandler, private val repos
             notifyPropertyChanged(BR.resultEmptyViewVisibility)
         }
 
+    var showDialogEvent = SingleLiveEvent()
+
     fun onClickItem(message: String) = handler.showMessage(message)
 
     fun onClickSearch() {
+        showDialogEvent.call()
         page = 0
         githubRepoList.postValue(null)
         getSearchResults()
